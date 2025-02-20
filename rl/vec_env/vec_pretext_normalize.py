@@ -1,4 +1,4 @@
-from . import VecEnvWrapper
+from .vec_env import VecEnvWrapper
 import numpy as np
 from .running_mean_std import RunningMeanStd
 import torch
@@ -11,6 +11,8 @@ import pickle
 from gst_updated.src.gumbel_social_transformer.temperature_scheduler import Temp_Scheduler
 from gst_updated.scripts.wrapper.crowd_nav_interface_parallel import CrowdNavPredInterfaceMultiEnv
 
+from sgan.scripts.inference import SGANInference
+
 class VecPretextNormalize(VecEnvWrapper):
     """
     A vectorized wrapper that processes the observations and rewards, used for GST predictors
@@ -21,6 +23,8 @@ class VecPretextNormalize(VecEnvWrapper):
 
     def __init__(self, venv, ob=False, ret=False, clipob=10., cliprew=10., gamma=0.99, epsilon=1e-8, config=None, test=False):
         VecEnvWrapper.__init__(self, venv)
+
+        self.use_sgan = False
 
         self.config = config
         self.device=torch.device(self.config.training.device)
@@ -40,21 +44,29 @@ class VecPretextNormalize(VecEnvWrapper):
         self.epsilon = epsilon
 
         # load and configure the prediction model
-        load_path = os.path.join(os.getcwd(), self.config.pred.model_dir)
-        if not os.path.isdir(load_path):
-            raise RuntimeError('The result directory was not found.')
-        checkpoint_dir = os.path.join(load_path, 'checkpoint')
-        with open(os.path.join(checkpoint_dir, 'args.pickle'), 'rb') as f:
-            self.args = pickle.load(f)
+        if self.use_sgan:
+            load_path = os.path.join(os.getcwd(), self.config.pred.model_path)
+            if not os.path.isfile(load_path):
+                raise RuntimeError('The model file was not found.')
+            self.sgan_predictor = SGANInference(load_path, self.device, self.max_human_num, self.num_envs)
+        else:
+            load_path = os.path.join(os.getcwd(), self.config.pred.model_dir)
+            if not os.path.isdir(load_path):
+                raise RuntimeError('The result directory was not found.')
+            checkpoint_dir = os.path.join(load_path, 'checkpoint')
+            with open(os.path.join(checkpoint_dir, 'args.pickle'), 'rb') as f:
+                self.args = pickle.load(f)
+            self.predictor = CrowdNavPredInterfaceMultiEnv(load_path=load_path, device=self.device, config = self.args, num_env = self.num_envs)
 
-        self.predictor = CrowdNavPredInterfaceMultiEnv(load_path=load_path, device=self.device, config = self.args, num_env = self.num_envs)
-
-        temperature_scheduler = Temp_Scheduler(self.args.num_epochs, self.args.init_temp, self.args.init_temp, temp_min=0.03)
-        self.tau = temperature_scheduler.decay_whole_process(epoch=100)
+            temperature_scheduler = Temp_Scheduler(self.args.num_epochs, self.args.init_temp, self.args.init_temp, temp_min=0.03)
+            self.tau = temperature_scheduler.decay_whole_process(epoch=100)
 
         # handle different prediction and control frequency
         self.pred_interval = int(self.config.data.pred_timestep//self.config.env.time_step)
-        self.buffer_len = (self.args.obs_seq_len - 1) * self.pred_interval + 1
+        if self.use_sgan:
+            self.buffer_len = 8
+        else:
+            self.buffer_len = (self.args.obs_seq_len - 1) * self.pred_interval + 1
 
 
 
@@ -128,7 +140,13 @@ class VecPretextNormalize(VecEnvWrapper):
         in_mask = in_mask[:, :, ::self.pred_interval]
 
         # forward predictor model
-        out_traj, out_mask = self.predictor.forward(input_traj=in_traj, input_binary_mask=in_mask)
+        if self.use_sgan:
+            out_traj, out_mask = self.sgan_predictor.evaluate(in_traj, in_mask)
+            print(in_traj[0][0])
+            print(out_traj[0][0])
+            out_traj = out_traj[:, :, :self.config.sim.predict_steps, :]
+        else:
+            out_traj, out_mask = self.predictor.forward(input_traj=in_traj, input_binary_mask=in_mask)
         out_mask = out_mask.bool()
 
         # add penalties if the robot collides with predicted future pos of humans

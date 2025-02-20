@@ -169,7 +169,8 @@ def main():
 				out_pred = rollouts_obs['spatial_edges'][:, :, 2:].to('cpu').numpy()
 				# send manager action to all processes
 				ack = envs.talk2Env(out_pred)
-				assert all(ack)
+				if not (ack is None):
+					assert all(ack)
 
 			if config.sim.render:
 				envs.render()

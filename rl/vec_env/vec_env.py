@@ -170,9 +170,11 @@ class VecEnvWrapper(VecEnv):
     def talk2Env_async(self, data):
         self.venv.talk2Env_async(data)
 
-    @abstractmethod
+    # @abstractmethod
+    # def talk2Env_wait(self):
+    #     pass
     def talk2Env_wait(self):
-        pass
+        return self.venv.talk2Env_wait()
 
     @abstractmethod
     def reset(self):

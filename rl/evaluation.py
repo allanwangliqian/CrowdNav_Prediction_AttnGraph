@@ -63,12 +63,14 @@ def evaluate(actor_critic, eval_envs, num_processes, device, test_size, logging,
             stepCounter = stepCounter + 1
             if config.robot.policy not in ['orca', 'social_force']:
                 # run inference on the NN policy
+                print(obs)
                 with torch.no_grad():
                     _, action, _, eval_recurrent_hidden_states = actor_critic.act(
                         obs,
                         eval_recurrent_hidden_states,
                         eval_masks,
                         deterministic=True)
+                print(action)
             else:
                 action = torch.zeros([1, 2], device=device)
             if not done:

@@ -1,0 +1,7 @@
+attrdict
+numpy
+Pillow
+setuptools
+six
+torch
+torchvision

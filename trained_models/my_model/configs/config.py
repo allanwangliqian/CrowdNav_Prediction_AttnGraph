@@ -69,7 +69,7 @@ class Config(object):
     # orca or social_force for now
     humans.policy = "orca"
     humans.radius = 0.3
-    humans.v_pref = 1
+    humans.v_pref = 1.75
     humans.sensor = "coordinates"
     # FOV = this values * PI
     humans.FOV = 2.
@@ -89,7 +89,7 @@ class Config(object):
 
     # one human may have a random chance to be blind to other agents at every time step
     humans.random_unobservability = False
-    humans.unobservable_chance = 0.3
+    humans.unobservable_chance = 0
 
     humans.random_policy_changing = False
 
@@ -100,17 +100,17 @@ class Config(object):
     # For baseline: srnn; our method: selfAttn_merge_srnn
     robot.policy = 'selfAttn_merge_srnn'
     robot.radius = 0.3
-    robot.v_pref = 1
+    robot.v_pref = 1.75
     robot.sensor = "coordinates"
     # FOV = this values * PI
     robot.FOV = 2
     # radius of perception range
-    robot.sensor_range = 5
+    robot.sensor_range = 40
 
     # action space of the robot
     action_space = BaseConfig()
     # holonomic or unicycle
-    action_space.kinematics = "unicycle"
+    action_space.kinematics = "holonomic"
 
     # config for ORCA
     orca = BaseConfig()
@@ -141,6 +141,7 @@ class Config(object):
     # If randomized humans: gst_updated/results/100-gumbel_social_transformer-faster_lstm-lr_0.001-init_temp_0.5-edge_head_0-ebd_64-snl_1-snh_8-seed_1000_rand/sj
     # else: gst_updated/results/100-gumbel_social_transformer-faster_lstm-lr_0.001-init_temp_0.5-edge_head_0-ebd_64-snl_1-snh_8-seed_1000/sj
     pred.model_dir = 'gst_updated/results/100-gumbel_social_transformer-faster_lstm-lr_0.001-init_temp_0.5-edge_head_0-ebd_64-snl_1-snh_8-seed_1000_rand/sj'
+    pred.model_path = 'sgan/models/sgan-models/zara1_8_model.pt'
 
     # LIDAR config
     lidar = BaseConfig()

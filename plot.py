@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-legends = ['Non-randomized humans', 'randomized humans', '', '', '']
+legends = ['Non-randomized humans', 'randomized humans', 'my model', '', '']
 
 # add any folder directories here!
 log_list = [
 pd.read_csv("trained_models/GST_predictor_non_rand/progress.csv"),
 pd.read_csv("trained_models/GST_predictor_rand/progress.csv"),
+pd.read_csv("trained_models/my_model/progress.csv"),
 	]
 
 
