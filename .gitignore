@@ -1,7 +1,11 @@
 gst_datasets/
 gst_updated/scripts/data
 trained_models/
+Python-RVO2/
+baselines/
+.vscode/
 .idea/
+.pytest_cache/
 venv/
 *.pyc 
 *__pycache__*
