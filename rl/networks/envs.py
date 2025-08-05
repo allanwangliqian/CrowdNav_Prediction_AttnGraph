@@ -8,14 +8,14 @@ from gym.spaces.dict import Dict
 
 from baselines import bench
 from baselines.common.atari_wrappers import make_atari, wrap_deepmind
-from rl.vec_env.vec_env import VecEnvWrapper
+from .vec_env.vec_env import VecEnvWrapper
 # from baselines.common.vec_env.dummy_vec_env import DummyVecEnv
 # from baselines.common.vec_env.shmem_vec_env import ShmemVecEnv
-from rl.networks.dummy_vec_env import DummyVecEnv
-from rl.networks.shmem_vec_env import ShmemVecEnv
-from rl.vec_env.vec_normalize import \
+from .dummy_vec_env import DummyVecEnv
+from .shmem_vec_env import ShmemVecEnv
+from .vec_env.vec_normalize import \
     VecNormalize as VecNormalize_
-from rl.vec_env.vec_pretext_normalize import VecPretextNormalize
+from .vec_env.vec_pretext_normalize import VecPretextNormalize
 
 try:
     import dm_control2gym

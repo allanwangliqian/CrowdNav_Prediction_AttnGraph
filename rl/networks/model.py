@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-from rl.networks.distributions import Bernoulli, Categorical, DiagGaussian
+from .distributions import Bernoulli, Categorical, DiagGaussian
 from .srnn_model import SRNN
 from .selfAttn_srnn_temp_node import selfAttn_merge_SRNN
 

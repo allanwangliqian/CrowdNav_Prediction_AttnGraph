@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from rl.networks.network_utils import AddBias, init
+from .network_utils import AddBias, init
 
 """
 Modify standard PyTorch distributions so they are compatible with this code.

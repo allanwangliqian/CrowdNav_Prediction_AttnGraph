@@ -69,7 +69,7 @@ class Config(object):
     # orca or social_force for now
     humans.policy = "orca"
     humans.radius = 0.3
-    humans.v_pref = 1.75
+    humans.v_pref = 1.0
     humans.sensor = "coordinates"
     # FOV = this values * PI
     humans.FOV = 2.
@@ -100,7 +100,7 @@ class Config(object):
     # For baseline: srnn; our method: selfAttn_merge_srnn
     robot.policy = 'selfAttn_merge_srnn'
     robot.radius = 0.3
-    robot.v_pref = 1.75
+    robot.v_pref = 1.00
     robot.sensor = "coordinates"
     # FOV = this values * PI
     robot.FOV = 2
